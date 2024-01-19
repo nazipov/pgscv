@@ -228,6 +228,11 @@ func discoverPgStatStatements(connStr string) (bool, string, string, error) {
 
 	// Establish connection to each database in the list and check where pg_stat_statements is installed.
 	for _, d := range databases {
+		// Skip database if not matched to allowed.
+		if config.DatabasesRE != nil && !config.DatabasesRE.MatchString(d) {
+			continue
+		}
+
 		pgconfig.Database = d
 		conn, err := store.NewWithConfig(pgconfig)
 		if err != nil {
